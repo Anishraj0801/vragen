@@ -1,5 +1,6 @@
 <?php return array(
     'root' => array(
+        'pretty_version' => 'dev-main',
         'version' => 'dev-main',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',

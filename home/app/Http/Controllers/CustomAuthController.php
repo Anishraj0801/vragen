@@ -8,7 +8,8 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\AddQue;
 use App\Models\AddAns;
-use Session;
+use Session;use 
+Illuminate\Support\Facades\DB;
 
 class CustomAuthController extends Controller
 {
@@ -62,13 +63,14 @@ class CustomAuthController extends Controller
     }
 
     public function dashboard()
-    {
+    
+    {   $cat=Category::all();
         // $data = array();
         // if (Session::has('loginID')) {
         //     $data = User::where('id', '=', Session::get('loginID'))->first();
         // }
         // return view('dashboard', compact('data'));
-        return view('dashboard');
+        return view('dashboard',['cat'=>$cat]);
     }
 
     public function logout()
@@ -90,4 +92,38 @@ class CustomAuthController extends Controller
         $data = compact('Questions', 'search');
         return view('questions-view')->with($data);
     }
+    public function AddQuestion(Request $req)
+        {
+
+                          $req->validate(
+                              [
+                                  'category'=>'required',
+                                  'des'=>'required'
+                              ]
+                          );
+                      
+                      
+                          $data= new AddQue();
+                          $data->add_question=$req->des;
+                          $cat_name=$req->category;
+
+                           $cat_id=DB::table('categories')
+                           ->select('category_id')
+                           ->where('category_name','=',$cat_name)
+                          ->get();
+                          foreach($cat_id as $temp)
+                           {
+                               $result=$temp->category_id;
+                           }
+                       
+                       
+                           $data->cat_Que_id=$result;
+                        //    var_dump();
+                           $data->add_User_id=session()->get('loginID');
+                       
+                           $data->save();
+
+
+                           return redirect()->back()->with('status','Question added successfully');
+        }               
 }
